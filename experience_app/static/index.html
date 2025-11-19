@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Experience API Playground</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        padding: 2rem;
+        background: #f2f4f7;
+        color: #1a1c1e;
+      }
+      h1,
+      h2 {
+        margin: 0 0 0.5rem;
+      }
+      section {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-top: 1rem;
+      }
+      input,
+      select,
+      textarea,
+      button {
+        margin-top: 0.35rem;
+        width: 100%;
+        padding: 0.6rem;
+        border-radius: 6px;
+        border: 1px solid #d0d7e3;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+      button {
+        cursor: pointer;
+        font-weight: 600;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        margin-top: 1rem;
+      }
+      button.secondary {
+        background: #0f172a;
+      }
+      .output {
+        background: #0f172a;
+        color: #e0f2fe;
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        min-height: 110px;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        overflow-y: auto;
+        white-space: pre-wrap;
+      }
+      .flex-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .flex-row > div {
+        flex: 1 1 240px;
+      }
+      #messages p {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+      #messages p.user {
+        background: #e0f2fe;
+        text-align: right;
+      }
+      #messages p.assistant {
+        background: #f1f5f9;
+      }
+      #sendButton:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+      }
+    </style>
+    <script src="/static/js/app.js" type="module"></script>
+  </head>
+  <body>
+    <h1>Experience API Playground</h1>
+    <p>
+      Interact with the Experience APIs. Text and audio requests return dummy echo responses today,
+      but the contract matches the future Google ADK integration.
+    </p>
+
+    <section>
+      <h2>Session</h2>
+      <label for="sessionId">Session ID</label>
+      <input id="sessionId" value="demo-session" />
+    </section>
+
+    <section>
+      <h2>REST · Text</h2>
+      <form id="textForm">
+        <label for="textInput">Text</label>
+        <input id="textInput" placeholder="How's the weather?" required />
+
+        <label for="textModality">Response modality</label>
+        <select id="textModality">
+          <option value="text" selected>text</option>
+          <option value="audio">audio</option>
+        </select>
+
+        <button type="submit">Send text</button>
+      </form>
+
+      <div class="output" id="textResponse">Awaiting response…</div>
+    </section>
+
+    <section>
+      <h2>REST · Audio</h2>
+      <p>Paste Base64 audio or regular text (auto-encoded) to simulate uploads.</p>
+      <form id="audioForm">
+        <label for="audioInput">Audio / text</label>
+        <textarea id="audioInput" placeholder="Hello from audio"></textarea>
+
+        <label for="audioModality">Response modality</label>
+        <select id="audioModality">
+          <option value="text">text</option>
+          <option value="audio" selected>audio</option>
+        </select>
+
+        <button type="submit">Send audio</button>
+      </form>
+
+      <div class="output" id="audioResponse">Awaiting response…</div>
+    </section>
+
+    <section>
+      <h2>Chat (WebSocket Stream)</h2>
+      <div class="flex-row">
+        <div>
+          <label for="wsModality">Response modality</label>
+          <select id="wsModality">
+            <option value="text" selected>text</option>
+            <option value="audio">audio</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button type="button" id="wsConnect">Connect</button>
+        </div>
+      </div>
+      <div id="messages" style="height: 400px; overflow-y: auto; border: 1px solid #d0d7e3; border-radius: 6px; padding: 1rem; margin-top: 1rem; background: #f8f9fa;">
+        <p style="color: #6b7280; margin: 0;">Connect to start chatting...</p>
+      </div>
+      <form id="messageForm" style="margin-top: 1rem;">
+        <div class="flex-row">
+          <div style="flex: 1;">
+            <input id="messageInput" placeholder="Type your message..." required />
+          </div>
+          <div>
+            <button type="submit" id="sendButton" disabled style="width: auto; min-width: 100px;">Send</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </body>
+</html>
+
