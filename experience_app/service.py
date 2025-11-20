@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import tempfile
+import os
 import time
+import pyttsx3
 from typing import AsyncGenerator, Dict, Literal, Optional
 
 from pydantic import BaseModel, Field
@@ -45,6 +48,40 @@ class DummyAssistantService(AssistantService):
 
     def __init__(self) -> None:
         self._latency_s = 0.15
+        # Initialize TTS engine (lazy init in method might be safer for threading, but let's try global first or per-call)
+        # pyttsx3 is not always thread-safe. We'll use a helper to run it in a separate process or just lock it.
+        # For simplicity in this demo, we'll init it inside the generation method or use a simple lock if needed.
+        pass
+
+    def _generate_tts_audio(self, text: str) -> str:
+        """Generate TTS audio for the given text and return base64 PCM/WAV."""
+        # Create a temporary file to save the audio
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tf:
+            temp_filename = tf.name
+        
+        try:
+            engine = pyttsx3.init()
+            # Configure voice if needed (optional)
+            # voices = engine.getProperty('voices')
+            # engine.setProperty('voice', voices[1].id) # Try female voice if available
+            
+            engine.save_to_file(text, temp_filename)
+            engine.runAndWait()
+            
+            # Read the file back
+            with open(temp_filename, "rb") as f:
+                audio_data = f.read()
+                
+            return base64.b64encode(audio_data).decode("ascii")
+        except Exception as e:
+            print(f"TTS Error: {e}")
+            return ""
+        finally:
+            if os.path.exists(temp_filename):
+                try:
+                    os.remove(temp_filename)
+                except:
+                    pass
 
     async def handle_text(
         self, session_id: str, text: str, response_modality: Literal["text", "audio"]
@@ -54,7 +91,7 @@ class DummyAssistantService(AssistantService):
             payload = f"You said: {text}. This is a dummy response from the Experience API."
             mime_type = "text/plain"
         else:
-            payload = self._synthesize_audio_bytes(text)
+            payload = self._get_audio_response(text)
             mime_type = "audio/pcm"
         return ExperienceResponse(
             session_id=session_id,
@@ -93,8 +130,13 @@ class DummyAssistantService(AssistantService):
                 payload = self._format_text(token)
                 mime_type = "text/plain"
             else:
-                payload = self._synthesize_audio_bytes(token)
-                mime_type = "audio/pcm"
+                # For streaming, we just send the full audio in the first chunk for now
+                # as we are using static files. In a real system, this would be chunked.
+                if index == 1:
+                    payload = self._get_audio_response(chunk_text)
+                    mime_type = "audio/pcm"
+                else:
+                    continue # Skip subsequent chunks for audio to avoid repeating the file
             yield ExperienceResponse(
                 session_id=session_id,
                 mime_type=mime_type,
@@ -102,7 +144,7 @@ class DummyAssistantService(AssistantService):
                 metadata=self._metadata(source="stream", chunk=index, total=len(parts)),
             )
 
-    def stream(
+    async def stream(
         self,
         session_id: str,
         mime_type: Literal["text/plain", "audio/pcm"],
@@ -113,11 +155,29 @@ class DummyAssistantService(AssistantService):
 
         if mime_type == "text/plain":
             # Echo the user's text with a simple response
-            chunk_text = f"I received: {data}. This is a dummy response. When connected to Google ADK, you'll get real AI responses here."
+            response_text = f"I heard you say: {data}"
         else:
             decoded = base64.b64decode(data)
-            chunk_text = f"I received {len(decoded)} bytes of audio. This is a dummy response."
-        return self._yield_chunks(session_id, chunk_text, response_modality)
+            response_text = f"I received {len(decoded)} bytes of audio."
+        
+        # 1. Yield Text Response
+        yield ExperienceResponse(
+            session_id=session_id,
+            mime_type="text/plain",
+            data=response_text,
+            metadata=self._metadata(source="stream", type="transcript"),
+        )
+        
+        # 2. Yield Audio Response (TTS)
+        # We always generate audio now, as requested ("text should be speaked out")
+        audio_base64 = self._generate_tts_audio(response_text)
+        if audio_base64:
+            yield ExperienceResponse(
+                session_id=session_id,
+                mime_type="audio/pcm",
+                data=audio_base64,
+                metadata=self._metadata(source="stream", type="tts"),
+            )
 
     def _format_text(self, text: str) -> str:
         # Return clean text without prefix for better UX
@@ -129,7 +189,7 @@ class DummyAssistantService(AssistantService):
         import struct
         import math
         
-        sample_rate = 240
+        sample_rate = 24000
         duration = 0.5  # seconds
         frequency = 440  # A4 note
         num_samples = int(sample_rate * duration)

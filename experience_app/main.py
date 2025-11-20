@@ -119,13 +119,15 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, response_mod
             message = json.loads(raw_message)
             mime_type: str = message.get("mime_type", "text/plain")
             data: str = message.get("data", "")
-            print(f"Received message: mime_type={mime_type}, data_length={len(data)}")
+            # Extract response_modality if present, otherwise use the connection-level default
+            msg_modality = message.get("response_modality", normalized_modality)
+            print(f"Received message: mime_type={mime_type}, modality={msg_modality}, data_length={len(data)}")
             
             stream = assistant_service.stream(
                 session_id=session_id,
                 mime_type="audio/pcm" if mime_type == "audio/pcm" else "text/plain",
                 data=data,
-                response_modality=normalized_modality,
+                response_modality=msg_modality,
             )
             async for chunk in stream:
                 await websocket.send_text(json.dumps(_response_payload(chunk)))
