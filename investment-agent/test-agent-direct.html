@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Agent Direct Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .panel {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .response-area {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .event-item {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .event-item h3 {
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .event-item pre {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .instructions code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .investment-options {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .investment-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .investment-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .investment-card p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .risk-low {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .risk-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .risk-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 Investment Agent Direct Protocol Test</h1>
+            <p>Test the investment agent protocol flow directly without CopilotKit</p>
+        </div>
+        
+        <div class="content">
+            <div class="panel full-width">
+                <div class="instructions">
+                    <h3>⚠️ Important: CORS Setup Required</h3>
+                    <p><strong>This HTML file must be served via HTTP, not opened directly!</strong></p>
+                    <p>Choose one of these options:</p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Python:</strong> <code>python -m http.server 8080</code> then open <code>http://localhost:8080/test-agent-direct.html</code></li>
+                        <li><strong>Node.js:</strong> <code>npx http-server -p 8080</code> then open <code>http://localhost:8080/test-agent-direct.html</code></li>
+                        <li><strong>VS Code:</strong> Right-click HTML file → "Open with Live Server"</li>
+                        <li><strong>Use script:</strong> Run <code>serve-test.html.bat</code> (Windows) or <code>serve-test.html.sh</code> (Mac/Linux)</li>
+                    </ol>
+                    <p style="margin-top: 10px;"><strong>Or use the Python test script instead:</strong> <code>python test-agent-simple.py</code></p>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>📤 Send Request</h2>
+                
+                <div class="input-group">
+                    <label for="agentUrl">Agent URL:</label>
+                    <input type="text" id="agentUrl" value="http://localhost:8000/" placeholder="http://localhost:8000/">
+                </div>
+                
+                <div class="input-group">
+                    <label for="sessionId">Session ID:</label>
+                    <input type="text" id="sessionId" value="" placeholder="Leave empty for new session">
+                </div>
+                
+                <div class="input-group">
+                    <label for="message">Investment Request:</label>
+                    <textarea id="message" placeholder="Enter your investment request...">I want to invest $50,000. What are my options?</textarea>
+                </div>
+                
+                <button id="sendBtn" onclick="sendRequest()">Send Request</button>
+                
+                <div id="status"></div>
+            </div>
+            
+            <div class="panel">
+                <h2>📥 Raw Response</h2>
+                <div class="response-area" id="rawResponse">No response yet...</div>
+            </div>
+            
+            <div class="panel full-width">
+                <h2>💼 Investment Options (if generated)</h2>
+                <div id="investmentOptions">No investment options generated yet...</div>
+            </div>
+            
+            <div class="panel full-width">
+                <h2>🔍 Protocol Events Analysis</h2>
+                <div id="eventsAnalysis"></div>
+            </div>
+            
+            <div class="panel full-width">
+                <h2>📊 Response Details</h2>
+                <div class="response-area" id="responseDetails">No details yet...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSessionId = null;
+
+        async function sendRequest() {
+            const agentUrl = document.getElementById('agentUrl').value;
+            const sessionId = document.getElementById('sessionId').value || `investment_session_${Date.now()}`;
+            const message = document.getElementById('message').value;
+            const sendBtn = document.getElementById('sendBtn');
+            const statusDiv = document.getElementById('status');
+            const rawResponseDiv = document.getElementById('rawResponse');
+            const eventsDiv = document.getElementById('eventsAnalysis');
+            const detailsDiv = document.getElementById('responseDetails');
+            const investmentDiv = document.getElementById('investmentOptions');
+
+            // Clear previous results
+            rawResponseDiv.textContent = 'Sending request...';
+            eventsDiv.innerHTML = '';
+            detailsDiv.textContent = 'Processing...';
+            investmentDiv.innerHTML = 'No investment options generated yet...';
+            statusDiv.innerHTML = '';
+            sendBtn.disabled = true;
+
+            // Show status
+            showStatus('info', 'Sending request to investment agent...');
+
+            try {
+                // First, check if agent server is reachable
+                showStatus('info', 'Checking if investment agent server is running...');
+                
+                try {
+                    const healthUrl = agentUrl.replace(/\/$/, '') + '/health';
+                    const healthCheck = await fetch(healthUrl, {
+                        method: 'GET',
+                        mode: 'cors'
+                    });
+                    if (healthCheck.ok) {
+                        const healthData = await healthCheck.json();
+                        showStatus('success', `✅ Investment agent server is reachable! (${healthData.status || 'healthy'})`);
+                    } else {
+                        showStatus('error', `⚠️ Agent server responded with status ${healthCheck.status}`);
+                    }
+                } catch (healthError) {
+                    showStatus('error', `❌ Cannot reach investment agent server at ${agentUrl}\n\n` +
+                        `Make sure:\n` +
+                        `1. Agent is running: npm run dev:agent\n` +
+                        `2. Agent URL is correct: ${agentUrl}\n` +
+                        `3. CORS is configured (port 8080 should be allowed)`);
+                    throw new Error(`Agent server not reachable: ${healthError.message}`);
+                }
+                
+                // Construct request for add_adk_fastapi_endpoint
+                const requestBody = {
+                    threadId: sessionId,
+                    runId: `run_${Date.now()}`,
+                    state: {},  // Must be an object/dictionary
+                    messages: [
+                        {
+                            id: `msg_${Date.now()}`,
+                            role: "user",
+                            content: message
+                        }
+                    ],
+                    tools: [],  // Array of tool definitions
+                    context: [],  // Must be an array
+                    forwardedProps: {}  // Required by add_adk_fastapi_endpoint
+                };
+
+                console.log('Sending AG-UI protocol request:', requestBody);
+                showStatus('info', 'Sending request to investment agent...');
+
+                const response = await fetch(agentUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream',  // AG-UI protocol expects SSE
+                    },
+                    mode: 'cors',
+                    credentials: 'omit',
+                    body: JSON.stringify(requestBody)
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}\n\nResponse: ${errorText.substring(0, 500)}`);
+                }
+
+                // AG-UI protocol returns Server-Sent Events (SSE) stream
+                let data;
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('text/event-stream')) {
+                    // Handle SSE stream
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
+                    const events = [];
+                    
+                    showStatus('info', 'Receiving streamed events...');
+                    
+                    try {
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+                            
+                            buffer += decoder.decode(value, { stream: true });
+                            const lines = buffer.split('\n');
+                            buffer = lines.pop() || '';
+                            
+                            for (const line of lines) {
+                                if (line.startsWith('data: ')) {
+                                    try {
+                                        const eventData = JSON.parse(line.substring(6));
+                                        events.push(eventData);
+                                        console.log('Received event:', eventData);
+                                    } catch (e) {
+                                        console.warn('Failed to parse event:', line);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Process remaining buffer
+                        if (buffer.startsWith('data: ')) {
+                            try {
+                                const eventData = JSON.parse(buffer.substring(6));
+                                events.push(eventData);
+                            } catch (e) {
+                                // Ignore parse errors for incomplete data
+                            }
+                        }
+                        
+                        // Aggregate events into response format
+                        data = {
+                            events: events,
+                            eventCount: events.length,
+                            messages: events.filter(e => e.type === 'MESSAGES_SNAPSHOT').flatMap(e => e.messages || []),
+                            lastMessage: events.filter(e => e.type === 'TEXT_MESSAGE_CONTENT' || e.type === 'TEXT_MESSAGE_END').pop()
+                        };
+                        
+                    } catch (streamError) {
+                        console.error('Stream reading error:', streamError);
+                        throw new Error(`Failed to read stream: ${streamError.message}`);
+                    }
+                } else if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    try {
+                        data = JSON.parse(text);
+                    } catch {
+                        data = { raw: text, contentType: contentType };
+                    }
+                }
+
+                // Display raw response
+                rawResponseDiv.textContent = JSON.stringify(data, null, 2);
+
+                // Extract and display investment options
+                extractInvestmentOptions(data, investmentDiv);
+
+                // Update session ID if provided
+                if (data.threadId) {
+                    currentSessionId = data.threadId;
+                    document.getElementById('sessionId').value = currentSessionId;
+                } else if (data.session_id) {
+                    currentSessionId = data.session_id;
+                    document.getElementById('sessionId').value = currentSessionId;
+                }
+
+                // Analyze protocol events
+                analyzeProtocol(data, eventsDiv);
+
+                // Show response details
+                showResponseDetails(data, detailsDiv);
+
+                showStatus('success', `✅ Request successful! Status: ${response.status}`);
+
+            } catch (error) {
+                console.error('Error:', error);
+                
+                let errorMessage = `Error: ${error.message}`;
+                
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    errorMessage = `❌ CORS/Network Error: ${error.message}\n\n` +
+                        `This usually means:\n` +
+                        `1. The HTML file is opened via file:// (not HTTP)\n` +
+                        `2. The agent server is not running on ${agentUrl}\n` +
+                        `3. CORS is blocking the request\n\n` +
+                        `Solutions:\n` +
+                        `- Serve this HTML via HTTP server (see instructions above)\n` +
+                        `- Or use: python test-agent-simple.py\n` +
+                        `- Make sure agent is running: npm run dev:agent`;
+                } else if (error.message.includes('Connection')) {
+                    errorMessage = `❌ Connection Error: ${error.message}\n\n` +
+                        `Make sure the investment agent server is running:\n` +
+                        `  npm run dev:agent\n\n` +
+                        `Or check if the URL is correct: ${agentUrl}`;
+                }
+                
+                rawResponseDiv.textContent = `${errorMessage}\n\nStack: ${error.stack || 'No stack trace'}`;
+                showStatus('error', `❌ Error: ${error.message}`);
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        function extractInvestmentOptions(data, container) {
+            container.innerHTML = '';
+            
+            let options = [];
+            
+            // Try to extract from events
+            if (data.events && Array.isArray(data.events)) {
+                // Look for STATE_SNAPSHOT events that might contain investment_options
+                const stateSnapshots = data.events.filter(e => e.type === 'STATE_SNAPSHOT');
+                for (const snapshot of stateSnapshots) {
+                    if (snapshot.state && snapshot.state.investment_options) {
+                        options = snapshot.state.investment_options;
+                        break;
+                    }
+                }
+                
+                // Also check for tool call results
+                const toolCalls = data.events.filter(e => 
+                    e.type === 'TOOL_CALL_END' || 
+                    e.type === 'TOOL_CALL_RESULT' ||
+                    (e.type === 'TEXT_MESSAGE_CONTENT' && e.content && e.content.includes('investment'))
+                );
+                
+                // Try to parse tool call results
+                for (const toolCall of toolCalls) {
+                    if (toolCall.result && toolCall.result.options) {
+                        options = toolCall.result.options;
+                        break;
+                    }
+                    if (toolCall.result && Array.isArray(toolCall.result)) {
+                        options = toolCall.result;
+                        break;
+                    }
+                }
+            }
+            
+            // Try to extract from direct response
+            if (options.length === 0 && data.response) {
+                try {
+                    const parsed = typeof data.response === 'string' ? JSON.parse(data.response) : data.response;
+                    if (parsed.options) {
+                        options = parsed.options;
+                    }
+                } catch (e) {
+                    // Not JSON, ignore
+                }
+            }
+            
+            if (options.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">No investment options found in response. The agent may not have called generate_investment_options tool yet.</p>';
+                return;
+            }
+            
+            // Display investment options
+            const optionsHtml = options.map((option, index) => {
+                const riskClass = `risk-${option.riskLevel || 'medium'}`;
+                return `
+                    <div class="investment-card">
+                        <h4>${index + 1}. ${option.name || 'Unnamed Investment'}</h4>
+                        <p><strong>Description:</strong> ${option.description || 'No description'}</p>
+                        <p>
+                            <span class="risk-badge ${riskClass}">${(option.riskLevel || 'medium').toUpperCase()} RISK</span>
+                            <strong>Minimum:</strong> $${(option.minimumAmount || 0).toLocaleString()}
+                        </p>
+                        <p><strong>Status:</strong> ${option.status || 'enabled'}</p>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `
+                <div class="investment-options">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">Found ${options.length} Investment Option(s)</h3>
+                    ${optionsHtml}
+                </div>
+            `;
+        }
+
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        function analyzeProtocol(data, container) {
+            container.innerHTML = '';
+
+            const checks = [
+                {
+                    name: 'Response Structure',
+                    check: () => typeof data === 'object' && data !== null,
+                    details: () => `Type: ${typeof data}, Keys: ${Object.keys(data).join(', ')}`
+                },
+                {
+                    name: 'Session Management',
+                    check: () => data.session_id || data.threadId,
+                    details: () => `Session ID: ${data.session_id || data.threadId || 'Missing'}`
+                },
+                {
+                    name: 'AG-UI Events',
+                    check: () => Array.isArray(data.events) && data.events.length > 0,
+                    details: () => data.events ? `${data.events.length} events found` : 'No events array'
+                },
+                {
+                    name: 'Investment Options in State',
+                    check: () => {
+                        if (data.events) {
+                            return data.events.some(e => 
+                                e.type === 'STATE_SNAPSHOT' && 
+                                e.state && 
+                                e.state.investment_options
+                            );
+                        }
+                        return false;
+                    },
+                    details: () => {
+                        if (data.events) {
+                            const stateEvents = data.events.filter(e => 
+                                e.type === 'STATE_SNAPSHOT' && 
+                                e.state && 
+                                e.state.investment_options
+                            );
+                            if (stateEvents.length > 0) {
+                                const options = stateEvents[0].state.investment_options;
+                                return `Found ${options.length} options in STATE_SNAPSHOT`;
+                            }
+                        }
+                        return 'No investment options in state';
+                    }
+                },
+                {
+                    name: 'Tool Calls',
+                    check: () => {
+                        if (data.events) {
+                            return data.events.some(e => 
+                                e.type === 'TOOL_CALL_START' || 
+                                e.type === 'TOOL_CALL_END'
+                            );
+                        }
+                        return false;
+                    },
+                    details: () => {
+                        if (data.events) {
+                            const toolCalls = data.events.filter(e => 
+                                e.type === 'TOOL_CALL_START' || 
+                                e.type === 'TOOL_CALL_END'
+                            );
+                            return toolCalls.length > 0 ? `${toolCalls.length} tool call(s) found` : 'No tool calls';
+                        }
+                        return 'No tool calls';
+                    }
+                },
+                {
+                    name: 'Message Content',
+                    check: () => {
+                        if (data.events) {
+                            return data.events.some(e => 
+                                e.type === 'TEXT_MESSAGE_CONTENT' || 
+                                e.type === 'TEXT_MESSAGE_END'
+                            );
+                        }
+                        return data.response || data.message || data.content;
+                    },
+                    details: () => {
+                        if (data.events) {
+                            const textEvents = data.events.filter(e => 
+                                e.type === 'TEXT_MESSAGE_CONTENT'
+                            );
+                            if (textEvents.length > 0) {
+                                const totalLength = textEvents.reduce((sum, e) => 
+                                    sum + (e.content || e.text || '').length, 0
+                                );
+                                return `${textEvents.length} text message(s), ${totalLength} chars`;
+                            }
+                        }
+                        const content = data.response || data.message || data.content;
+                        return content ? `Content length: ${String(content).length} chars` : 'No content found';
+                    }
+                }
+            ];
+
+            checks.forEach(check => {
+                const eventItem = document.createElement('div');
+                eventItem.className = 'event-item';
+                
+                const passed = check.check();
+                const icon = passed ? '✅' : '⚠️';
+                const status = passed ? 'PASS' : 'WARN';
+                
+                eventItem.innerHTML = `
+                    <h3>${icon} ${check.name} - ${status}</h3>
+                    <pre>${check.details()}</pre>
+                `;
+                
+                container.appendChild(eventItem);
+            });
+
+            // Show events if present
+            if (data.events && Array.isArray(data.events)) {
+                const eventsHeader = document.createElement('div');
+                eventsHeader.className = 'event-item';
+                eventsHeader.innerHTML = '<h3>📋 Events Found:</h3>';
+                container.appendChild(eventsHeader);
+
+                data.events.forEach((event, index) => {
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'event-item';
+                    eventItem.innerHTML = `
+                        <h3>Event ${index + 1}: ${event.type || event.event_type || 'Unknown'}</h3>
+                        <pre>${JSON.stringify(event, null, 2)}</pre>
+                    `;
+                    container.appendChild(eventItem);
+                });
+            }
+        }
+
+        function showResponseDetails(data, container) {
+            const details = {
+                'Response Type': typeof data,
+                'Keys': Object.keys(data).join(', '),
+                'Event Count': data.events ? data.events.length : 0,
+                'Has Investment Options': data.events ? data.events.some(e => 
+                    e.type === 'STATE_SNAPSHOT' && 
+                    e.state && 
+                    e.state.investment_options
+                ) : false,
+                'Has Tool Calls': data.events ? data.events.some(e => 
+                    e.type === 'TOOL_CALL_START' || e.type === 'TOOL_CALL_END'
+                ) : false,
+                'Has Messages': !!(data.messages && data.messages.length > 0)
+            };
+
+            container.textContent = JSON.stringify(details, null, 2);
+        }
+
+        // Allow Enter key to send (Ctrl+Enter for new line)
+        document.getElementById('message').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey) {
+                e.preventDefault();
+                sendRequest();
+            }
+        });
+    </script>
+</body>
+</html>
+
