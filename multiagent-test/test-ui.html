@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent Test UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .panel {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .response-area {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.checking {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .event {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+        
+        .event-type {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .calendar-booking {
+            background: #e7f3ff;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .calendar-booking h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .calendar-booking p {
+            margin: 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Multi-Agent Test UI</h1>
+            <p>Test Root Agent and Calendar Agent</p>
+        </div>
+        
+        <div class="content">
+            <!-- Root Agent Panel -->
+            <div class="panel">
+                <h2>🌐 Root Agent (Port 8000)</h2>
+                <div id="root-status" class="status checking">Checking connection...</div>
+                
+                <!-- Agent Call Indicator -->
+                <div id="agent-indicator" style="display: none; margin: 10px 0; padding: 10px; border-radius: 5px; font-weight: bold;">
+                    <span id="agent-indicator-text"></span>
+                </div>
+                
+                <div class="input-group">
+                    <label for="root-message">Message:</label>
+                    <textarea id="root-message" placeholder="Try: 'What is Python?' or 'Book an appointment for tomorrow at 2pm'"></textarea>
+                </div>
+                
+                <button id="root-send" onclick="sendToRootAgent()">Send to Root Agent</button>
+                
+                <div style="margin-top: 15px;">
+                    <label>Response:</label>
+                    <div id="root-response" class="response-area">Waiting for response...</div>
+                </div>
+            </div>
+            
+            <!-- Calendar Agent Panel -->
+            <div class="panel">
+                <h2>📅 Calendar Agent (Port 8001)</h2>
+                <div id="calendar-status" class="status checking">Checking connection...</div>
+                
+                <div class="input-group">
+                    <label for="calendar-message">Message:</label>
+                    <textarea id="calendar-message" placeholder="Try: 'Book a meeting for next Monday at 10am titled Team Standup'"></textarea>
+                </div>
+                
+                <button id="calendar-send" onclick="sendToCalendarAgent()">Send to Calendar Agent</button>
+                
+                <div style="margin-top: 15px;">
+                    <label>Response:</label>
+                    <div id="calendar-response" class="response-area">Waiting for response...</div>
+                </div>
+                
+                <div id="calendar-booking" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check service status
+        async function checkStatus() {
+            // Check root agent
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                document.getElementById('root-status').className = 'status connected';
+                document.getElementById('root-status').textContent = `✅ Connected - ${data.service}`;
+            } catch (e) {
+                document.getElementById('root-status').className = 'status disconnected';
+                document.getElementById('root-status').textContent = '❌ Not connected - Make sure root agent is running';
+            }
+            
+            // Check calendar agent
+            try {
+                const response = await fetch('http://localhost:8001/health');
+                const data = await response.json();
+                document.getElementById('calendar-status').className = 'status connected';
+                document.getElementById('calendar-status').textContent = `✅ Connected - ${data.service}`;
+            } catch (e) {
+                document.getElementById('calendar-status').className = 'status disconnected';
+                document.getElementById('calendar-status').textContent = '❌ Not connected - Make sure calendar agent is running';
+            }
+        }
+        
+        // Send message to root agent
+        async function sendToRootAgent() {
+            const message = document.getElementById('root-message').value;
+            if (!message.trim()) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            const responseDiv = document.getElementById('root-response');
+            responseDiv.textContent = 'Sending request...\n';
+            
+            const button = document.getElementById('root-send');
+            button.disabled = true;
+            
+            try {
+                const payload = {
+                    threadId: `test_${Date.now()}`,
+                    runId: `run_${Date.now()}`,
+                    messages: [{
+                        id: `msg_${Date.now()}`,
+                        role: 'user',
+                        content: message
+                    }],
+                    state: {},
+                    tools: [],
+                    context: [],
+                    forwardedProps: {}
+                };
+                
+                const response = await fetch('http://localhost:8000/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                let output = 'Events received:\n\n';
+                let toolCalled = null;
+                const indicatorDiv = document.getElementById('agent-indicator');
+                const indicatorText = document.getElementById('agent-indicator-text');
+                indicatorDiv.style.display = 'none'; // Reset indicator
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.substring(6));
+                                
+                                // Track which tool is being called
+                                if (data.type === 'TOOL_CALL_START') {
+                                    toolCalled = data.name || 'unknown';
+                                    output += `\n🔧 TOOL CALLED: ${toolCalled}\n`;
+                                    
+                                    // Show visual indicator
+                                    indicatorDiv.style.display = 'block';
+                                    if (toolCalled === 'CalendarAgent') {
+                                        output += '✅ Calendar Agent is being invoked!\n';
+                                        indicatorText.textContent = '📅 Calendar Agent Called (A2A)';
+                                        indicatorDiv.style.background = '#d4edda';
+                                        indicatorDiv.style.color = '#155724';
+                                        indicatorDiv.style.border = '2px solid #28a745';
+                                    } else if (toolCalled === 'TextResponder') {
+                                        output += '✅ Text Agent is being invoked!\n';
+                                        indicatorText.textContent = '💬 Text Agent Called (Local)';
+                                        indicatorDiv.style.background = '#cfe2ff';
+                                        indicatorDiv.style.color = '#084298';
+                                        indicatorDiv.style.border = '2px solid #0d6efd';
+                                    } else {
+                                        indicatorText.textContent = `🔧 Tool Called: ${toolCalled}`;
+                                        indicatorDiv.style.background = '#fff3cd';
+                                        indicatorDiv.style.color = '#856404';
+                                        indicatorDiv.style.border = '2px solid #ffc107';
+                                    }
+                                }
+                                
+                                output += `[${data.type}] `;
+                                
+                                if (data.type === 'TEXT_MESSAGE_CONTENT' && data.delta) {
+                                    output += data.delta;
+                                } else if (data.type === 'TOOL_CALL_ARGS') {
+                                    output += '\nArguments: ' + JSON.stringify(data.arguments || {}, null, 2);
+                                } else if (data.type === 'STATE_SNAPSHOT' && data.state) {
+                                    output += '\nState: ' + JSON.stringify(data.state, null, 2);
+                                } else if (data.type === 'RUN_ERROR') {
+                                    const error = data.error || {};
+                                    output += '\n❌ ERROR: ' + (error.message || JSON.stringify(error));
+                                } else {
+                                    output += JSON.stringify(data, null, 2);
+                                }
+                                output += '\n';
+                            } catch (e) {
+                                output += line + '\n';
+                            }
+                        }
+                    }
+                    
+                    responseDiv.textContent = output;
+                }
+                
+            } catch (error) {
+                responseDiv.textContent = `Error: ${error.message}\n\nMake sure the root agent is running on port 8000.`;
+            } finally {
+                button.disabled = false;
+            }
+        }
+        
+        // Send message to calendar agent
+        async function sendToCalendarAgent() {
+            const message = document.getElementById('calendar-message').value;
+            if (!message.trim()) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            const responseDiv = document.getElementById('calendar-response');
+            const bookingDiv = document.getElementById('calendar-booking');
+            responseDiv.textContent = 'Sending request...\n';
+            bookingDiv.style.display = 'none';
+            
+            const button = document.getElementById('calendar-send');
+            button.disabled = true;
+            
+            try {
+                const payload = {
+                    threadId: `test_${Date.now()}`,
+                    runId: `run_${Date.now()}`,
+                    messages: [{
+                        id: `msg_${Date.now()}`,
+                        role: 'user',
+                        content: message
+                    }],
+                    state: {},
+                    tools: [],
+                    context: [],
+                    forwardedProps: {}
+                };
+                
+                const response = await fetch('http://localhost:8001/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                let output = 'Events received:\n\n';
+                let bookingData = null;
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.substring(6));
+                                output += `[${data.type}] `;
+                                
+                                if (data.type === 'TEXT_MESSAGE_CONTENT' && data.delta) {
+                                    output += data.delta;
+                                } else if (data.type === 'STATE_SNAPSHOT' && data.state) {
+                                    if (data.state.current_booking) {
+                                        bookingData = data.state.current_booking;
+                                    }
+                                    output += '\nState: ' + JSON.stringify(data.state, null, 2);
+                                } else {
+                                    output += JSON.stringify(data, null, 2);
+                                }
+                                output += '\n';
+                            } catch (e) {
+                                output += line + '\n';
+                            }
+                        }
+                    }
+                    
+                    responseDiv.textContent = output;
+                    
+                    // Display calendar booking if available
+                    if (bookingData) {
+                        bookingDiv.innerHTML = `
+                            <h3>📅 Calendar Booking</h3>
+                            <p><strong>Title:</strong> ${bookingData.title || 'N/A'}</p>
+                            <p><strong>Date:</strong> ${bookingData.date || 'N/A'}</p>
+                            <p><strong>Time:</strong> ${bookingData.time || 'N/A'}</p>
+                            <p><strong>Duration:</strong> ${bookingData.duration || 'N/A'} minutes</p>
+                            <p><strong>Status:</strong> ${bookingData.status || 'N/A'}</p>
+                        `;
+                        bookingDiv.style.display = 'block';
+                    }
+                }
+                
+            } catch (error) {
+                responseDiv.textContent = `Error: ${error.message}\n\nMake sure the calendar agent is running on port 8001.`;
+            } finally {
+                button.disabled = false;
+            }
+        }
+        
+        // Check status on load
+        checkStatus();
+        setInterval(checkStatus, 10000); // Check every 10 seconds
+    </script>
+</body>
+</html>
