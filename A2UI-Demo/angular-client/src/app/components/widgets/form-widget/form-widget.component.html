@@ -1,0 +1,87 @@
+<div class="form-widget" *ngIf="data && data.fields">
+  <h3 class="form-title" *ngIf="data.title">{{ data.title }}</h3>
+  <p class="form-description" *ngIf="data.description">{{ data.description }}</p>
+  <form (ngSubmit)="handleSubmit()">
+    <div class="form-fields">
+      <div class="form-field" *ngFor="let field of data.fields">
+        <!-- Text, Email, Password inputs -->
+        <label *ngIf="field.type === 'text' || field.type === 'email' || field.type === 'password'" [for]="field.name">
+          {{ field.label }}
+          <span class="required" *ngIf="field.required">*</span>
+        </label>
+        <input
+          *ngIf="field.type === 'text' || field.type === 'email' || field.type === 'password'"
+          [type]="field.type"
+          [id]="field.name"
+          [name]="field.name"
+          [value]="formData[field.name] || ''"
+          (input)="handleChange(field.name, $any($event.target).value)"
+          [placeholder]="field.placeholder"
+          [required]="field.required"
+          [class.error]="errors[field.name]"
+        />
+        <span class="field-error" *ngIf="errors[field.name]">{{ errors[field.name] }}</span>
+
+        <!-- Textarea -->
+        <label *ngIf="field.type === 'textarea'" [for]="field.name">
+          {{ field.label }}
+          <span class="required" *ngIf="field.required">*</span>
+        </label>
+        <textarea
+          *ngIf="field.type === 'textarea'"
+          [id]="field.name"
+          [name]="field.name"
+          [value]="formData[field.name] || ''"
+          (input)="handleChange(field.name, $any($event.target).value)"
+          [placeholder]="field.placeholder"
+          [rows]="field.rows || 4"
+          [required]="field.required"
+          [class.error]="errors[field.name]"
+        ></textarea>
+        <span class="field-error" *ngIf="errors[field.name]">{{ errors[field.name] }}</span>
+
+        <!-- Select -->
+        <label *ngIf="field.type === 'select'" [for]="field.name">
+          {{ field.label }}
+          <span class="required" *ngIf="field.required">*</span>
+        </label>
+        <select
+          *ngIf="field.type === 'select'"
+          [id]="field.name"
+          [name]="field.name"
+          [value]="formData[field.name] || ''"
+          (change)="handleChange(field.name, $any($event.target).value)"
+          [required]="field.required"
+          [class.error]="errors[field.name]"
+        >
+          <option value="">Select {{ field.label }}</option>
+          <option *ngFor="let option of field.options" [value]="typeof option === 'string' ? option : option.value">
+            {{ typeof option === 'string' ? option : option.label }}
+          </option>
+        </select>
+        <span class="field-error" *ngIf="errors[field.name]">{{ errors[field.name] }}</span>
+
+        <!-- Checkbox -->
+        <label *ngIf="field.type === 'checkbox'" class="checkbox-label">
+          <input
+            type="checkbox"
+            [name]="field.name"
+            [checked]="!!formData[field.name]"
+            (change)="handleChange(field.name, $any($event.target).checked)"
+            [required]="field.required"
+          />
+          <span>{{ field.label }}</span>
+          <span class="required" *ngIf="field.required">*</span>
+        </label>
+        <span class="field-error" *ngIf="errors[field.name]">{{ errors[field.name] }}</span>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="form-submit">{{ data.submitLabel || 'Submit' }}</button>
+    </div>
+  </form>
+</div>
+<div class="widget-error" *ngIf="!data || !data.fields">
+  No form fields provided
+</div>
+

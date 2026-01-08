@@ -1,0 +1,26 @@
+<div class="card-widget" *ngIf="data">
+  <div class="card-image" *ngIf="data.image">
+    <img [src]="data.image.url || data.image" [alt]="data.image.alt || data.title || 'Card image'" />
+  </div>
+  <div class="card-content">
+    <h3 class="card-title" *ngIf="data.title">{{ data.title }}</h3>
+    <div class="card-body" *ngIf="data.content">
+      <p *ngIf="typeof data.content === 'string'">{{ data.content }}</p>
+      <div *ngIf="typeof data.content !== 'string'">{{ data.content }}</div>
+    </div>
+    <div class="card-footer" *ngIf="data.footer">{{ data.footer }}</div>
+  </div>
+  <div class="card-actions" *ngIf="data.actions && data.actions.length > 0">
+    <button
+      *ngFor="let action of data.actions; let i = index"
+      [class]="'card-action' + (action.primary ? ' primary' : '')"
+      (click)="handleAction(action)"
+    >
+      {{ action.label }}
+    </button>
+  </div>
+</div>
+<div class="widget-error" *ngIf="!data">
+  No data provided for card widget
+</div>
+

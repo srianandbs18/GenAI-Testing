@@ -1,0 +1,54 @@
+<div class="datatable-widget" *ngIf="data && data.columns && data.rows">
+  <h3 class="table-title" *ngIf="data.title">{{ data.title }}</h3>
+  <p class="table-description" *ngIf="data.description">{{ data.description }}</p>
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th
+            *ngFor="let column of data.columns; let i = index"
+            [class]="column.sortable !== false ? 'sortable' : ''"
+            (click)="column.sortable !== false && handleSort(column.key)"
+          >
+            <div class="th-content">
+              {{ column.label || column.key }}
+              <span class="sort-indicator" *ngIf="column.sortable !== false && sortConfig.key === column.key">
+                {{ sortConfig.direction === 'asc' ? '↑' : '↓' }}
+              </span>
+            </div>
+          </th>
+          <th class="actions-header" *ngIf="data.actions && data.actions.length > 0">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="getSortedRows().length === 0">
+          <td [attr.colspan]="data.columns.length + (data.actions ? 1 : 0)" class="empty-state">
+            No data available
+          </td>
+        </tr>
+        <tr *ngFor="let row of getSortedRows(); let rowIndex = index">
+          <td *ngFor="let column of data.columns">{{ formatCellValue(row[column.key]) }}</td>
+          <td class="actions-cell" *ngIf="data.actions && data.actions.length > 0">
+            <div class="action-buttons">
+              <button
+                *ngFor="let action of data.actions; let actionIndex = index"
+                [class]="'action-button ' + (action.type || 'default')"
+                (click)="handleAction(action, row, rowIndex)"
+                [title]="action.label"
+              >
+                {{ action.icon || action.label }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="table-footer" *ngIf="getSortedRows().length > 0">
+    Showing {{ getSortedRows().length }} row{{ getSortedRows().length !== 1 ? 's' : '' }}
+  </div>
+</div>
+<div class="widget-error" *ngIf="!data || !data.columns || !data.rows">
+  No table data provided
+</div>
+

@@ -1,0 +1,40 @@
+<div class="chatbot">
+  <div class="chatbot-messages" #messagesContainer>
+    <div *ngFor="let message of messages" [class]="'message message-' + message.type">
+      <div class="message-content">
+        <div *ngIf="message.type === 'user'" class="message-text">{{ message.text }}</div>
+        <div *ngIf="message.type === 'bot'">
+          <div *ngIf="message.text" class="message-text">{{ message.text }}</div>
+          <div *ngIf="message.a2ui" class="a2ui-container">
+            <app-a2ui-renderer [message]="message.a2ui"></app-a2ui-renderer>
+          </div>
+        </div>
+      </div>
+      <div class="message-time">
+        {{ message.timestamp | date:'shortTime' }}
+      </div>
+    </div>
+    <div *ngIf="isLoading" class="message message-bot">
+      <div class="message-content">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input
+      type="text"
+      [(ngModel)]="inputText"
+      (keypress)="onKeyPress($event)"
+      placeholder="Type a command (e.g., 'show card', 'show form', 'show table', 'show all')..."
+      [disabled]="isLoading"
+    />
+    <button (click)="handleSend()" [disabled]="isLoading || !inputText.trim()">
+      Send
+    </button>
+  </div>
+</div>
+
