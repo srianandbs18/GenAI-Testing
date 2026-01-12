@@ -1,0 +1,12 @@
+.a2ui-renderer {
+  width: 100%;
+}
+
+.a2ui-error {
+  padding: 1rem;
+  background: #fee;
+  color: #c33;
+  border-radius: 6px;
+  border: 1px solid #fcc;
+}
+

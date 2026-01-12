@@ -1,0 +1,65 @@
+<div class="deposit-widget" *ngIf="data">
+  <div class="widget-header">
+    <h3 class="widget-title">{{ data.title }}</h3>
+    <p class="widget-description" *ngIf="data.description">{{ data.description }}</p>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="deposit-form">
+    <div *ngFor="let field of data.fields" class="form-field">
+      <label [for]="field.name">
+        {{ field.label }}
+        <span *ngIf="field.required" class="required">*</span>
+      </label>
+      
+      <input
+        *ngIf="field.type === 'text' || field.type === 'number' || field.type === 'email'"
+        [id]="field.name"
+        [name]="field.name"
+        [type]="field.type"
+        [placeholder]="field.placeholder || ''"
+        [required]="field.required"
+        [min]="field.min"
+        [max]="field.max"
+        [step]="field.step"
+        [(ngModel)]="formData[field.name]"
+        class="form-input"
+      />
+
+      <select
+        *ngIf="field.type === 'select'"
+        [id]="field.name"
+        [name]="field.name"
+        [required]="field.required"
+        [(ngModel)]="formData[field.name]"
+        class="form-select"
+      >
+        <option value="" disabled>Select {{ field.label }}</option>
+        <option *ngFor="let option of field.options" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <textarea
+        *ngIf="field.type === 'textarea'"
+        [id]="field.name"
+        [name]="field.name"
+        [placeholder]="field.placeholder || ''"
+        [required]="field.required"
+        [rows]="field.rows || 4"
+        [(ngModel)]="formData[field.name]"
+        class="form-textarea"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="submit-button"
+        [disabled]="!isFormValid()"
+      >
+        {{ data.submitLabel || 'Submit' }}
+      </button>
+    </div>
+  </form>
+</div>
+

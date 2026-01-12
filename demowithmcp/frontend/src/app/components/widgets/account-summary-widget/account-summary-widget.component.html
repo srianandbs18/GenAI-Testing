@@ -1,0 +1,33 @@
+<div class="account-summary-widget" *ngIf="data">
+  <div class="account-header">
+    <h3 class="widget-title">{{ data.title || 'Account Summary' }}</h3>
+    <div class="account-number">{{ data.accountNumber }}</div>
+    <div class="account-type">{{ data.accountType }}</div>
+  </div>
+
+  <div class="balance-section">
+    <div class="balance-label">Current Balance</div>
+    <div class="balance-amount">{{ formatCurrency(data.balance) }}</div>
+    <div class="available-balance">
+      Available: {{ formatCurrency(data.availableBalance || data.balance) }}
+    </div>
+  </div>
+
+  <div class="transactions-section" *ngIf="data.recentTransactions && data.recentTransactions.length > 0">
+    <h4 class="section-title">Recent Transactions</h4>
+    <div class="transactions-list">
+      <div 
+        *ngFor="let transaction of data.recentTransactions" 
+        class="transaction-item"
+        [class]="getTransactionTypeClass(transaction.type)"
+      >
+        <div class="transaction-date">{{ transaction.date }}</div>
+        <div class="transaction-description">{{ transaction.description }}</div>
+        <div class="transaction-amount" [class]="transaction.type">
+          {{ transaction.type === 'credit' ? '+' : '-' }}{{ formatCurrency(Math.abs(transaction.amount)) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
