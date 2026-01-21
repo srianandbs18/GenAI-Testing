@@ -1,0 +1,55 @@
+{
+  "widget_type": "schedule_meeting",
+  "schema_version": "1.0",
+  "metadata": {
+    "title": "Schedule Meeting",
+    "description": "Select date and time for meeting"
+  },
+  "properties": {
+    "timezone": {
+      "type": "timezone_display",
+      "label": "CURRENT TIME ZONE",
+      "value": "",
+      "editable": true,
+      "action": "change_timezone"
+    },
+    "date_selector": {
+      "type": "button_group",
+      "label": "SELECT A DATE",
+      "style": "horizontal",
+      "multi_select": false,
+      "options": []
+    },
+    "time_slots": {
+      "type": "button_list",
+      "label": "SELECT A TIME",
+      "style": "vertical",
+      "multi_select": false,
+      "options": []
+    },
+    "actions": {
+      "type": "action_buttons",
+      "buttons": [
+        {
+          "id": "schedule",
+          "label": "Schedule meeting",
+          "style": "primary",
+          "enabled": false,
+          "action": "submit_schedule"
+        },
+        {
+          "id": "close",
+          "label": "Close",
+          "style": "secondary",
+          "enabled": true,
+          "action": "close_widget"
+        }
+      ]
+    }
+  },
+  "styling": {
+    "theme": "dark",
+    "background_color": "#2D2D2D",
+    "text_color": "#FFFFFF"
+  }
+}

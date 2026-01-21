@@ -1,0 +1,39 @@
+{
+  "widget_type": "timezone_selector",
+  "schema_version": "1.0",
+  "metadata": {
+    "title": "Change Time Zone",
+    "description": "Select your preferred timezone"
+  },
+  "properties": {
+    "timezone_list": {
+      "type": "radio_list",
+      "label": "SELECT TIME ZONE",
+      "options": []
+    },
+    "actions": {
+      "type": "action_buttons",
+      "buttons": [
+        {
+          "id": "confirm",
+          "label": "Confirm",
+          "style": "primary",
+          "enabled": true,
+          "action": "confirm_timezone"
+        },
+        {
+          "id": "cancel",
+          "label": "Cancel",
+          "style": "secondary",
+          "enabled": true,
+          "action": "cancel_timezone"
+        }
+      ]
+    }
+  },
+  "styling": {
+    "theme": "dark",
+    "background_color": "#2D2D2D",
+    "text_color": "#FFFFFF"
+  }
+}

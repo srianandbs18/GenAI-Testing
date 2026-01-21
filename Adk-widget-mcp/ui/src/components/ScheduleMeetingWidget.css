@@ -1,0 +1,188 @@
+.schedule-widget {
+  background: linear-gradient(180deg, #3a2f29 0%, #2d2d2d 15%);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.widget-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.timezone-section {
+  margin-bottom: 20px;
+}
+
+.timezone-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d4c5b9;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.timezone-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.timezone-change-btn {
+  background: none;
+  border: none;
+  color: #d4c5b9;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.timezone-change-btn:hover {
+  color: #ffffff;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 20px 0;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.date-section {
+  margin-bottom: 20px;
+}
+
+.date-buttons {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.date-button {
+  flex: 1;
+  min-width: 80px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 12px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #ffffff;
+}
+
+.date-button:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.date-button.selected {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+}
+
+.date-day {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.date-date {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.time-section {
+  margin-bottom: 25px;
+}
+
+.time-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.time-button {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.time-button:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.time-button.selected {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.action-button {
+  width: 100%;
+  padding: 16px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.action-button.primary {
+  background: #d4c5b9;
+  color: #2d2d2d;
+}
+
+.action-button.primary:not(.disabled):hover {
+  background: #e5d8cc;
+}
+
+.action-button.primary.disabled {
+  background: #5a5a5a;
+  color: #8a8a8a;
+  cursor: not-allowed;
+}
+
+.action-button.secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+}
+
+.action-button.secondary:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
